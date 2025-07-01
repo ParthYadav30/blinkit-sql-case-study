@@ -121,21 +121,23 @@ from outlets;
 SELECT E.item_identifier, ROUND(SUM(O.item_outlet_sales), 2) AS ItemWiseSales
 FROM items_economics E
 JOIN Outlets O
-ON E.item_identifier = O.item_identifier
+  ON E.item_identifier = O.item_identifier
 GROUP BY E.item_identifier
 ORDER BY ItemWiseSales DESC 
 LIMIT 5;
+
 ```
 ### 4.MOST PROFITABLE ITEM TYPE
 ```sql
 SELECT Q.item_type,
-ROUND(SUM(O.item_outlet_sales), 2) AS total_sales
+       ROUND(SUM(O.item_outlet_sales), 2) AS total_sales
 FROM items_qualities Q
 JOIN outlets O 
-ON Q.item_identifier = O.item_identifier
+  ON Q.item_identifier = O.item_identifier
 GROUP BY Q.item_type
 ORDER BY total_sales DESC
 LIMIT 1;
+
 ```
 ### 5.TOTAL SALES DONE BY OUTLET TYPE
 ```sql
@@ -143,6 +145,7 @@ SELECT outlet_type, ROUND(SUM(O.item_outlet_sales), 2) AS total_sales
 FROM Outlets O
 GROUP BY outlet_type
 ORDER BY total_sales DESC;
+
 ```
 ### 6.AVERAGE SALES PER OUTLET SIZE
 ```sql
@@ -169,10 +172,12 @@ LIMIT 1;
 ```
 ### 8.SALES BY OUTLET AGE
 ```sql
-SELECT (YEAR(CURDATE()) - outlet_establishment_year) AS Outlet_Age, ROUND(SUM(item_outlet_sales), 2) AS Revenue
+SELECT (YEAR(CURDATE()) - outlet_establishment_year) AS Outlet_Age, 
+       ROUND(SUM(item_outlet_sales), 2) AS Revenue
 FROM outlets
 GROUP BY Outlet_age
 ORDER BY Outlet_age DESC;
+
 ```
 ### 9.MRP BINNING AND SALES ANALYSIS
 ```sql
@@ -195,20 +200,26 @@ ORDER BY
 ```    
 ### 10.PRODUCTS WITH LOW VISIBILITY YET HIGHER SALES
 ```sql
- WITH Low_Visibility_Items AS (
- SELECT E.item_identifier, E. item_visibility, ROUND(SUM(O.item_outlet_sales), 2) AS total_sales
- FROM items_economics E
- JOIN outlets O 
- ON E.item_identifier = O.item_identifier
- WHERE E.item_visibility > 0.05
- GROUP BY item_identifier, item_visibility),
- Ranked_items AS (
- SELECT *, NTILE(10)OVER(ORDER BY total_sales DESC) AS Sales_rank
- FROM Low_Visibility_Items) 
- SELECT *
- FROM ranked_items
- WHERE Sales_rank = 10
- ORDER BY total_sales DESC;
+WITH Low_Visibility_Items AS (
+  SELECT E.item_identifier, 
+         E.item_visibility, 
+         ROUND(SUM(O.item_outlet_sales), 2) AS total_sales
+  FROM items_economics E
+  JOIN outlets O 
+    ON E.item_identifier = O.item_identifier
+  WHERE E.item_visibility > 0.05
+  GROUP BY item_identifier, item_visibility
+),
+Ranked_items AS (
+  SELECT *, 
+         NTILE(10) OVER (ORDER BY total_sales DESC) AS Sales_rank
+  FROM Low_Visibility_Items
+) 
+SELECT *
+FROM ranked_items
+WHERE Sales_rank = 10
+ORDER BY total_sales DESC;
+
  ```
 ### 11.ITEM TYPES SALES STABILITY ACROSS ALL OUTLET TYPES
 ```sql
@@ -237,32 +248,40 @@ LIMIT 10;
 ### 12.HIDDEN CHAMPIONS BY CATEGORY, FIND LOW VISIBILITY ITEMS (VISIBILITY < 0.05) THAT RANK IN THE TOP 5% OF SALES WITHIN THEIR ITEM TYPE
 ```sql
 WITH Sales AS (
-SELECT Q.item_identifier, Q.item_type, E.item_visibility, ROUND(SUM(item_outlet_sales), 2) AS total_sales
-FROM items_qualities Q
-JOIN items_economics E
-ON Q.item_identifier = E.item_identifier
-JOIN outlets O
-ON E.item_identifier = O.item_identifier
-WHERE E.item_visibility < 0.05
-GROUP BY Q.item_identifier, Q.item_type, E.item_visibility),
+  SELECT Q.item_identifier, 
+         Q.item_type, 
+         E.item_visibility, 
+         ROUND(SUM(item_outlet_sales), 2) AS total_sales
+  FROM items_qualities Q
+  JOIN items_economics E 
+    ON Q.item_identifier = E.item_identifier
+  JOIN outlets O 
+    ON E.item_identifier = O.item_identifier
+  WHERE E.item_visibility < 0.05
+  GROUP BY Q.item_identifier, Q.item_type, E.item_visibility
+),
 Rank_data AS (
-SELECT *, PERCENT_RANK()OVER(PARTITION BY item_type ORDER BY total_sales DESC) AS Sales_percent
-FROM Sales)
-
-SELECT*
+  SELECT *, 
+         PERCENT_RANK() OVER (PARTITION BY item_type ORDER BY total_sales DESC) AS Sales_percent
+  FROM Sales
+)
+SELECT *
 FROM Rank_data
 WHERE Sales_percent <= 0.05;
+
 ```
 ### 13.Outlet Fat-Preference Index, Which stores sell more ‘Low Fat’ vs ‘Regular’ items?
 ```sql
 SELECT 
-    o.outlet_identifier,
-    iq.item_fat_content,
-    ROUND(SUM(o.item_outlet_sales), 2) AS total_sales
+  o.outlet_identifier,
+  iq.item_fat_content,
+  ROUND(SUM(o.item_outlet_sales), 2) AS total_sales
 FROM items_qualities iq
-JOIN outlets o ON iq.item_identifier = o.item_identifier
+JOIN outlets o 
+  ON iq.item_identifier = o.item_identifier
 GROUP BY o.outlet_identifier, iq.item_fat_content
 ORDER BY o.outlet_identifier, total_sales DESC;
+
 ```
 ### 14.Sales Share of Top 10% Outlets in Each Tier
 ```sql
