@@ -116,7 +116,6 @@ from items_qualities;
 select *
 from outlets;
 ```
-
 ###TOP 5 SELLING PRODUCTS ACROSS ALL OUTLETS
 ```sql
 SELECT E.item_identifier, ROUND(SUM(O.item_outlet_sales), 2) AS ItemWiseSales
@@ -127,7 +126,6 @@ GROUP BY E.item_identifier
 ORDER BY ItemWiseSales DESC 
 LIMIT 5;
 ```
-
 ###MOST PROFITABLE ITEM TYPE
 ```sql
 SELECT Q.item_type,
@@ -148,7 +146,6 @@ ORDER BY total_sales DESC;
 ```
 ###AVERAGE SALES PER OUTLET SIZE
 ```sql
-
 SELECT 
     CASE 
         WHEN outlet_size = '' THEN 'Unknown'
@@ -195,8 +192,7 @@ JOIN outlets o ON e.item_identifier = o.item_identifier
 GROUP BY mrp_range
 ORDER BY 
   FIELD(mrp_range, '0–50', '51–100', '101–150', '151–200', '201–250', '251–300', 'Other');
-```  
-  
+```    
 ###PRODUCTS WITH LOW VISIBILITY YET HIGHER SALES
 ```sql
  WITH Low_Visibility_Items AS (
@@ -214,8 +210,6 @@ ORDER BY
  WHERE Sales_rank = 10
  ORDER BY total_sales DESC;
  ```
- 
- 
 ###ITEM TYPES SALES STABILITY ACROSS ALL OUTLET TYPES
 ```sql
  WITH sales_by_type_outlet AS (
@@ -240,7 +234,6 @@ FROM sales_variance
 ORDER BY sales_stddev ASC
 LIMIT 10;
 ```
-
 ###HIDDEN CHAMPIONS BY CATEGORY, FIND LOW VISIBILITY ITEMS (VISIBILITY < 0.05) THAT RANK IN THE TOP 5% OF SALES WITHIN THEIR ITEM TYPE
 ```sql
 WITH Sales AS (
@@ -260,7 +253,6 @@ SELECT*
 FROM Rank_data
 WHERE Sales_percent <= 0.05;
 ```
-
 ###Outlet Fat-Preference Index, Which stores sell more ‘Low Fat’ vs ‘Regular’ items?
 ```sql
 SELECT 
