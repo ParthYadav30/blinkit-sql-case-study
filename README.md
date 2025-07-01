@@ -39,6 +39,7 @@ This project showcases my SQL data analysis skills using a simulated dataset mod
 10. Hidden champions: low visibility, high sales items
 
 ### 🔴 Advanced-Level Insights
+11.
 11. Outlet Performance Index 
 12. Item Type Dominance Score across outlets
 13. Item Type Concentration by outlet type
@@ -116,7 +117,7 @@ from items_qualities;
 select *
 from outlets;
 ```
-###TOP 5 SELLING PRODUCTS ACROSS ALL OUTLETS
+### TOP 5 SELLING PRODUCTS ACROSS ALL OUTLETS
 ```sql
 SELECT E.item_identifier, ROUND(SUM(O.item_outlet_sales), 2) AS ItemWiseSales
 FROM items_economics E
@@ -126,7 +127,7 @@ GROUP BY E.item_identifier
 ORDER BY ItemWiseSales DESC 
 LIMIT 5;
 ```
-###MOST PROFITABLE ITEM TYPE
+### MOST PROFITABLE ITEM TYPE
 ```sql
 SELECT Q.item_type,
 ROUND(SUM(O.item_outlet_sales), 2) AS total_sales
@@ -137,14 +138,14 @@ GROUP BY Q.item_type
 ORDER BY total_sales DESC
 LIMIT 1;
 ```
-###TOTAL SALES DONE BY OUTLET TYPE
+### TOTAL SALES DONE BY OUTLET TYPE
 ```sql
 SELECT outlet_type, ROUND(SUM(O.item_outlet_sales), 2) AS total_sales
 FROM Outlets O
 GROUP BY outlet_type
 ORDER BY total_sales DESC;
 ```
-###AVERAGE SALES PER OUTLET SIZE
+### AVERAGE SALES PER OUTLET SIZE
 ```sql
 SELECT 
     CASE 
@@ -159,7 +160,7 @@ GROUP BY
         ELSE outlet_size
     END;
 ```
-###ITEM TYPE WITH HIGHEST VISIBILITY
+### ITEM TYPE WITH HIGHEST VISIBILITY
 ```sql
 SELECT Item_Type, ROUND(AVG(Item_visibility) * 100, 2) AS AvgVisibilityPercent
 FROM items_economics
@@ -167,14 +168,14 @@ GROUP BY Item_type
 ORDER BY AvgVisibilityPercent DESC
 LIMIT 1;
 ```
-###SALES BY OUTLET AGE
+### SALES BY OUTLET AGE
 ```sql
 SELECT (YEAR(CURDATE()) - outlet_establishment_year) AS Outlet_Age, ROUND(SUM(item_outlet_sales), 2) AS Revenue
 FROM outlets
 GROUP BY Outlet_age
 ORDER BY Outlet_age DESC;
 ```
-###MRP BINNING AND SALES ANALYSIS
+### MRP BINNING AND SALES ANALYSIS
 ```sql
 SELECT 
   CASE 
@@ -193,7 +194,7 @@ GROUP BY mrp_range
 ORDER BY 
   FIELD(mrp_range, '0–50', '51–100', '101–150', '151–200', '201–250', '251–300', 'Other');
 ```    
-###PRODUCTS WITH LOW VISIBILITY YET HIGHER SALES
+### PRODUCTS WITH LOW VISIBILITY YET HIGHER SALES
 ```sql
  WITH Low_Visibility_Items AS (
  SELECT E.item_identifier, E. item_visibility, ROUND(SUM(O.item_outlet_sales), 2) AS total_sales
@@ -210,7 +211,7 @@ ORDER BY
  WHERE Sales_rank = 10
  ORDER BY total_sales DESC;
  ```
-###ITEM TYPES SALES STABILITY ACROSS ALL OUTLET TYPES
+### ITEM TYPES SALES STABILITY ACROSS ALL OUTLET TYPES
 ```sql
  WITH sales_by_type_outlet AS (
     SELECT 
@@ -234,7 +235,7 @@ FROM sales_variance
 ORDER BY sales_stddev ASC
 LIMIT 10;
 ```
-###HIDDEN CHAMPIONS BY CATEGORY, FIND LOW VISIBILITY ITEMS (VISIBILITY < 0.05) THAT RANK IN THE TOP 5% OF SALES WITHIN THEIR ITEM TYPE
+### HIDDEN CHAMPIONS BY CATEGORY, FIND LOW VISIBILITY ITEMS (VISIBILITY < 0.05) THAT RANK IN THE TOP 5% OF SALES WITHIN THEIR ITEM TYPE
 ```sql
 WITH Sales AS (
 SELECT Q.item_identifier, Q.item_type, E.item_visibility, ROUND(SUM(item_outlet_sales), 2) AS total_sales
@@ -253,7 +254,7 @@ SELECT*
 FROM Rank_data
 WHERE Sales_percent <= 0.05;
 ```
-###Outlet Fat-Preference Index, Which stores sell more ‘Low Fat’ vs ‘Regular’ items?
+### Outlet Fat-Preference Index, Which stores sell more ‘Low Fat’ vs ‘Regular’ items?
 ```sql
 SELECT 
     o.outlet_identifier,
@@ -264,7 +265,7 @@ JOIN outlets o ON iq.item_identifier = o.item_identifier
 GROUP BY o.outlet_identifier, iq.item_fat_content
 ORDER BY o.outlet_identifier, total_sales DESC;
 ```
-###Sales Share of Top 10% Outlets in Each Tier
+### Sales Share of Top 10% Outlets in Each Tier
 ```sql
 WITH outlet_sales AS (
   SELECT 
@@ -296,7 +297,7 @@ SELECT
 FROM tier_agg
 ORDER BY top_10_percent_sales_share DESC;
 ```
-###High Margin, Low Turnover Items
+### High Margin, Low Turnover Items
 ```sql
 WITH global_stats AS (
   SELECT 
@@ -331,7 +332,7 @@ WHERE
   AND i.total_sales < g.avg_sales_global
 ORDER BY i.avg_mrp DESC;
 ```
-###Item Type Concentration Index per Outlet Type
+### Item Type Concentration Index per Outlet Type
 ```sql
 WITH item_sales AS (
   SELECT 
@@ -372,7 +373,7 @@ FROM contribution
 WHERE rank_within_outlet = 1
 ORDER BY sales_percent DESC;
 ```
-###Dominance Score of Item Types
+### Dominance Score of Item Types
 ```sql
 WITH type_sales_per_outlet AS (
   SELECT 
@@ -410,7 +411,7 @@ FROM top_items t
 CROSS JOIN total_outlets o
 ORDER BY dominance_score DESC;
 ```
-###Price Band Dependency by Outlet Size
+### Price Band Dependency by Outlet Size
 ```sql
 WITH banded_sales AS (
   SELECT 
